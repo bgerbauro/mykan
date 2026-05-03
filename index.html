@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mykan – Ciclos de coordenação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <nav class="top-tabs" aria-label="Abas principais">
+        <a class="top-brand" href="#painel" aria-label="mykan – Ciclos de coordenação">
+          <svg class="top-brand-mark" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect width="28" height="28" rx="7" fill="#07111f"/>
+            <rect x="5" y="8" width="6" height="14" rx="3" fill="#38bdf8"/>
+            <rect x="12" y="11" width="6" height="11" rx="3" fill="#7dd3fc"/>
+            <rect x="19" y="14" width="4" height="8" rx="2" fill="#0ea5e9" opacity="0.7"/>
+          </svg>
+          <span class="top-brand-name">mykan</span>
+        </a>
+        <a
+          class="top-tab-button is-active"
+          href="#painel"
+          data-tab-trigger="painel"
+          aria-selected="true"
+          aria-controls="painel"
+        >
+          Painel
+        </a>
+        <a
+          class="top-tab-button"
+          href="#checkpoint"
+          data-tab-trigger="checkpoint"
+          aria-selected="false"
+          aria-controls="checkpoint"
+        >
+          Ata do Checkpoint
+        </a>
+        <a
+          class="top-tab-button hidden"
+          href="#governanca"
+          data-tab-trigger="governanca"
+          aria-selected="false"
+          aria-controls="governanca"
+        >
+          Governança
+        </a>
+
+        <div class="top-tabs-actions">
+          <p class="session-label hidden" id="session-status-label"></p>
+          <button class="secondary-button top-tabs-auth-button btn-icon" id="open-auth-button" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Check-in
+          </button>
+          <button
+            class="secondary-button top-tabs-auth-button btn-icon hidden"
+            id="logout-button"
+            type="button"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sair
+          </button>
+        </div>
+      </nav>
+
+      <section class="tab-panel is-active" id="painel" data-tab-panel="painel">
+        <section class="hero-panel board-hero">
+          <div class="hero-copy">
+            <p class="eyebrow hidden" id="board-hero-eyebrow"></p>
+            <h2 id="board-hero-title">Painel de Fluxo do projeto</h2>
+            <p class="hero-text" id="board-view-summary">
+              Visualize os cartões de tarefas do projeto. A edição é liberada apenas para usuários autenticados.
+            </p>
+          </div>
+
+          <div class="header-actions">
+            <button class="primary-button header-button btn-icon" id="new-discipline-button" type="button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nova disciplina
+            </button>
+            <button class="primary-button header-button btn-icon" id="new-card-button" type="button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Novo cartão
+            </button>
+            <div class="toolbar-search-row">
+              <svg class="toolbar-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="search" id="board-search-input" class="board-search-input" placeholder="Buscar por título ou descrição…" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="column-visibility-panel">
+              <span class="column-visibility-label">Colunas visíveis</span>
+              <div class="toolbar-controls-row">
+                <div class="column-visibility-group" id="column-visibility-filters"></div>
+                <label class="discipline-filter-box" for="discipline-filter-select">
+                  <span class="discipline-filter-label">Disciplina</span>
+                  <select id="discipline-filter-select"></select>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="board-panel">
+          <div class="board-heading">
+            <div>
+              <p class="eyebrow eyebrow-light" id="board-heading-eyebrow">Cardboard</p>
+              <h2 id="board-heading-title">Cartões disponíveis para consulta</h2>
+            </div>
+            <p class="board-help hidden" id="board-help-text"></p>
+          </div>
+
+          <div class="board-gate hidden" id="board-auth-gate">
+            <h3>Área interna bloqueada</h3>
+            <p>
+              Entre com uma conta interna para criar, editar, mover e publicar cartões do projeto.
+            </p>
+            <button class="primary-button" id="board-gate-login-button" type="button">
+              Check-in na área interna
+            </button>
+          </div>
+
+          <div class="board-columns-shell" id="board-columns-shell">
+            <div class="board-columns" id="board-columns"></div>
+          </div>
+          <div class="board-column-indicator hidden" id="board-column-indicator" aria-live="polite">
+            <span id="board-column-indicator-text"></span>
+          </div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="checkpoint" data-tab-panel="checkpoint" hidden>
+        <section class="hero-panel checkpoint-hero">
+          <div class="hero-copy">
+            <p class="eyebrow hidden" id="checkpoint-hero-eyebrow"></p>
+            <h2 id="checkpoint-hero-title">Pautas dos checkpoints</h2>
+            <p class="hero-text" id="checkpoint-view-summary">
+              Está área mostra as pautas do projeto. Para editar, faça check-in.
+            </p>
+          </div>
+        </section>
+
+        <section class="board-panel checkpoint-shell">
+          <div class="board-gate hidden" id="checkpoint-auth-gate">
+            <h3>Área interna bloqueada</h3>
+            <p>
+              A edição da ata, o arquivamento de assuntos e a geração de cards via IA exigem autenticação.
+            </p>
+            <button class="primary-button" id="checkpoint-gate-login-button" type="button">
+              Check-in na área interna
+            </button>
+          </div>
+
+          <div class="checkpoint-grid">
+            <section class="checkpoint-block">
+              <div class="checkpoint-block-header">
+                <div>
+                  <p class="eyebrow eyebrow-light">Ata de reunião</p>
+                  <h2 id="checkpoint-active-heading">Assuntos ativos</h2>
+                </div>
+              </div>
+
+              <div class="checkpoint-toolbar">
+                <div class="checkpoint-ai-panel" id="checkpoint-ai-panel">
+                  <button class="checkpoint-ai-toggle btn-icon" id="checkpoint-ai-toggle" type="button" aria-expanded="true" aria-controls="checkpoint-ai-body">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 9.5 9.5 3 12l6.5 2.5L12 21l2.5-6.5L21 12l-6.5-2.5z"/></svg>
+                    IA
+                    <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+                  </button>
+                  <div class="checkpoint-ai-body" id="checkpoint-ai-body">
+                  <div>
+                    <p class="checkpoint-ai-label">IA para cards</p>
+                    <p class="checkpoint-ai-help" id="checkpoint-ai-summary">
+                      Configure a integração de IA para transformar pontos da ata em cartões do painel.
+                    </p>
+                  </div>
+
+                  <button
+                    class="secondary-button checkpoint-configure-ai-button btn-icon"
+                    id="checkpoint-configure-ai-button"
+                    type="button"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 9.5 9.5 3 12l6.5 2.5L12 21l2.5-6.5L21 12l-6.5-2.5z"/></svg>
+                    Configurar IA
+                  </button>
+                  </div>
+                </div>
+
+                <p class="checkpoint-feedback hidden" id="checkpoint-feedback"></p>
+              </div>
+
+              <button class="primary-button checkpoint-add-button btn-icon checkpoint-add-top-button" id="checkpoint-add-top-button" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Inserir assunto
+              </button>
+
+              <div class="checkpoint-list" id="checkpoint-active-list"></div>
+
+              <button class="primary-button checkpoint-add-button btn-icon" id="checkpoint-add-button" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Inserir assunto
+              </button>
+            </section>
+
+            <section class="checkpoint-block checkpoint-archived-block" id="checkpoint-archived-panel">
+              <div class="checkpoint-block-header checkpoint-block-header-archived">
+                <div>
+                  <h2 id="checkpoint-archived-heading">Histórico de assuntos</h2>
+                </div>
+
+                <div class="checkpoint-header-actions">
+                  <button
+                    class="secondary-button checkpoint-toggle-button"
+                    id="checkpoint-toggle-archived-button"
+                    type="button"
+                    aria-expanded="true"
+                    aria-controls="checkpoint-archived-content"
+                  >
+                    Ocultar bloco
+                  </button>
+                </div>
+              </div>
+
+              <div class="checkpoint-archived-content" id="checkpoint-archived-content">
+                <div class="checkpoint-list" id="checkpoint-archived-list"></div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="governanca" data-tab-panel="governanca" hidden>
+        <section class="hero-panel governance-hero">
+          <div class="hero-copy">
+            <p class="eyebrow hidden"></p>
+            <h2>Governança, segurança e privacidade</h2>
+            <p class="hero-text">
+              Esta aba concentra o aviso de privacidade, o canal do titular e os controles operacionais.
+            </p>
+          </div>
+        </section>
+
+        <section class="board-panel governance-shell">
+          <div class="governance-grid">
+            <section class="governance-card governance-action-card">
+              <div class="governance-card-header">
+                <div>
+                  <p class="eyebrow eyebrow-light">Informações</p>
+                  <h3>Privacidade, segurança e controles</h3>
+                </div>
+              </div>
+
+              <p class="governance-action-copy">
+                Consulte o aviso de privacidade, os mecanismos adotados e o modelo interno de acesso em um único painel.
+              </p>
+
+              <div class="governance-action-footer">
+                <button class="primary-button" id="open-governance-info-button" type="button">
+                  Abrir informações
+                </button>
+              </div>
+            </section>
+
+            <section class="governance-card governance-action-card">
+              <div class="governance-card-header">
+                <div>
+                  <p class="eyebrow eyebrow-light">Canal do titular</p>
+                  <h3>Solicitações e direitos</h3>
+                </div>
+              </div>
+
+              <p class="governance-action-copy">
+                Registre pedidos de acesso, correção, eliminação, oposição, revisão automatizada ou comunicação de incidente em um formulário dedicado.
+              </p>
+
+              <div class="governance-action-footer">
+                <button class="primary-button" id="open-privacy-request-button" type="button">
+                  Abrir formulário
+                </button>
+              </div>
+            </section>
+
+            <section class="governance-card hidden" id="user-admin-panel">
+              <div class="governance-card-header">
+                <div>
+                  <p class="eyebrow eyebrow-light">Acessos internos</p>
+                  <h3>Usuários e perfis</h3>
+                </div>
+              </div>
+
+              <div class="governance-users-toolbar">
+                <button class="primary-button btn-icon" id="open-create-user-button" type="button">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                  Novo usuário
+                </button>
+                <button
+                  class="secondary-button btn-icon"
+                  id="edit-selected-user-button"
+                  type="button"
+                  disabled
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Editar selecionado
+                </button>
+              </div>
+
+              <div class="users-list" id="users-list"></div>
+            </section>
+
+            <section class="governance-card governance-action-card hidden" id="export-my-data-panel">
+              <div class="governance-card-header">
+                <div>
+                  <p class="eyebrow eyebrow-light">Portabilidade</p>
+                  <h3>Exportar meus dados</h3>
+                </div>
+              </div>
+
+              <p class="governance-action-copy">
+                Baixe um arquivo JSON com os seus dados pessoais armazenados nesta base local: perfil e histórico de ações que lhe dizem respeito.
+              </p>
+
+              <div class="governance-action-footer">
+                <button class="secondary-button btn-icon" id="export-my-data-button" type="button">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Exportar meus dados
+                </button>
+              </div>
+            </section>
+
+            <section class="governance-card governance-action-card hidden" id="password-governance-panel">
+              <div class="governance-card-header">
+                <div>
+                  <p class="eyebrow eyebrow-light">Credenciais</p>
+                  <h3>Senha e sessão</h3>
+                </div>
+              </div>
+
+              <p class="governance-action-copy" id="password-governance-copy">
+                Atualize sua senha sempre que precisar. As sessões internas expiram após 30 minutos e exigem novo check-in.
+              </p>
+
+              <div class="governance-action-footer">
+                <button class="secondary-button btn-icon" id="open-password-modal-button" type="button">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v.01"/><path d="M5 11V8a7 7 0 1 1 14 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/></svg>
+                  Redefinir minha senha
+                </button>
+              </div>
+            </section>
+
+            <section class="governance-card governance-card-discreet hidden" id="audit-log-panel">
+              <div class="governance-card-header">
+                <div>
+                  <p class="eyebrow eyebrow-light">Prestação de contas</p>
+                  <h3>Trilha de auditoria</h3>
+                </div>
+              </div>
+
+              <p class="governance-action-copy">
+                Consulte as ações registradas e filtre os eventos por usuário em um painel dedicado.
+              </p>
+
+              <div class="governance-action-footer">
+                <button class="secondary-button btn-icon" id="open-audit-log-button" type="button">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+                  Abrir trilha
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div class="modal-backdrop hidden" id="governance-info-modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="governance-info-modal-title">
+        <div class="modal-header">
+          <div class="modal-header-copy">
+            <p class="eyebrow eyebrow-light">Informações</p>
+            <h2 id="governance-info-modal-title">Privacidade, segurança e controles</h2>
+            <p class="modal-help">
+              Este popup reúne o aviso de privacidade, os mecanismos adotados e o modelo interno de acesso da V1.
+            </p>
+          </div>
+          <button
+            class="icon-button"
+            id="close-governance-info-modal-button"
+            type="button"
+            aria-label="Fechar modal"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="governance-modal-stack">
+          <section class="governance-modal-section">
+            <h3>Aviso de privacidade</h3>
+            <div class="governance-copy" id="privacy-notice-content"></div>
+          </section>
+
+          <section class="governance-modal-section">
+            <h3>Mecanismos adotados</h3>
+            <ul class="governance-list">
+              <li>Leitura pública separada da edição interna.</li>
+              <li>Cards e pautas são públicos por padrão, mas a edição exige autenticação.</li>
+              <li>O admin pode ativar ou desativar autonomias específicas por usuário.</li>
+              <li>Trilha de auditoria para login, usuários e solicitações do titular.</li>
+            </ul>
+          </section>
+
+          <section class="governance-modal-section">
+            <h3>Controles internos</h3>
+            <div class="governance-split">
+              <div>
+                <h4 class="governance-subtitle">Perfis ativos</h4>
+                <div class="queue-list" id="permission-model-list"></div>
+              </div>
+              <div>
+                <h4 class="governance-subtitle">Classificação de dados</h4>
+                <div class="classification-list" id="data-classification-list"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary-button" id="cancel-governance-info-modal-button" type="button">
+            Fechar
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="privacy-request-modal-backdrop">
+      <section
+        class="modal modal-compact"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="privacy-request-modal-title"
+      >
+        <div class="modal-header">
+          <div class="modal-header-copy">
+            <p class="eyebrow eyebrow-light">Canal do titular</p>
+            <h2 id="privacy-request-modal-title">Solicitações e direitos</h2>
+            <p class="modal-help">
+              Registre pedidos relacionados à LGPD e ao tratamento de dados desta V1.
+            </p>
+          </div>
+          <button
+            class="icon-button"
+            id="close-privacy-request-modal-button"
+            type="button"
+            aria-label="Fechar modal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form class="governance-form" id="privacy-request-form">
+          <label class="field">
+            <span>Nome</span>
+            <input id="privacy-request-name" name="name" type="text" placeholder="Seu nome" required />
+          </label>
+
+          <label class="field">
+            <span>E-mail para retorno</span>
+            <input
+              id="privacy-request-email"
+              name="email"
+              type="email"
+              placeholder="voce@empresa.com"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Tipo de solicitação</span>
+            <select id="privacy-request-type" name="type" required>
+              <option value="confirmacao">Confirmação de tratamento</option>
+              <option value="acesso">Acesso aos dados</option>
+              <option value="correcao">Correção</option>
+              <option value="eliminacao">Eliminação</option>
+              <option value="oposicao">Oposição</option>
+              <option value="revisao_automatizada">Revisão de decisão automatizada</option>
+              <option value="incidente">Comunicação de incidente</option>
+            </select>
+          </label>
+
+          <label class="field field-full">
+            <span>Detalhes</span>
+            <textarea
+              id="privacy-request-message"
+              name="message"
+              rows="4"
+              placeholder="Descreva o pedido e o contexto necessário."
+              required
+            ></textarea>
+          </label>
+
+          <p class="form-error hidden" id="privacy-request-feedback"></p>
+
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancel-privacy-request-modal-button" type="button">
+              Cancelar
+            </button>
+            <button class="primary-button" type="submit">Registrar solicitação</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="user-modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Acessos internos</p>
+            <h2 id="user-modal-title">Criar usuário interno</h2>
+            <p class="modal-help" id="user-modal-help">
+              Defina os dados do usuário, seu perfil e as permissões que ele poderá usar.
+            </p>
+          </div>
+          <button
+            class="icon-button"
+            id="close-user-modal-button"
+            type="button"
+            aria-label="Fechar modal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form class="governance-form" id="user-form">
+          <div class="form-grid">
+            <label class="field">
+              <span>Nome</span>
+              <input id="user-name" name="userName" type="text" placeholder="Nome do usuário" required />
+            </label>
+
+            <label class="field">
+              <span>E-mail</span>
+              <input id="user-email" name="userEmail" type="email" placeholder="usuario@empresa.com" required />
+            </label>
+
+            <label class="field">
+              <span>Senha</span>
+              <input id="user-password" name="userPassword" type="text" placeholder="Mínimo 6 caracteres" required />
+            </label>
+
+            <label class="field">
+              <span>Perfil</span>
+              <select id="user-role" name="userRole" required>
+                <option value="admin">Admin</option>
+                <option value="user">Usuário</option>
+              </select>
+            </label>
+
+            <label class="field field-full">
+              <span>Status do usuário</span>
+              <span class="user-active-toggle">
+                <input id="user-active" name="userActive" type="checkbox" checked />
+                <span class="user-active-copy">
+                  <strong id="user-active-state">Ativo</strong>
+                  <small id="user-active-hint">Pode acessar o ambiente interno normalmente.</small>
+                </span>
+              </span>
+            </label>
+          </div>
+
+          <section class="governance-modal-section">
+            <h3>Permissões</h3>
+            <p class="governance-inline-note hidden" id="user-permission-note"></p>
+            <div class="permission-grid" id="user-permission-grid"></div>
+          </section>
+
+          <p class="form-error hidden" id="user-form-feedback"></p>
+
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancel-user-modal-button" type="button">
+              Cancelar
+            </button>
+            <button class="primary-button" id="submit-user-modal-button" type="submit">
+              Criar usuário interno
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="password-modal-backdrop">
+      <section class="modal modal-compact" role="dialog" aria-modal="true" aria-labelledby="password-modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Acesso interno</p>
+            <h2 id="password-modal-title">Redefinir senha</h2>
+            <p class="modal-help" id="password-modal-help">
+              Troque sua senha para manter o acesso interno protegido.
+            </p>
+          </div>
+          <button class="icon-button" id="close-password-modal-button" type="button" aria-label="Fechar modal">
+            Ã—
+          </button>
+        </div>
+
+        <form id="password-form">
+          <label class="field">
+            <span>Senha atual</span>
+            <input
+              id="password-current"
+              name="passwordCurrent"
+              type="password"
+              placeholder="Informe sua senha atual"
+              autocomplete="current-password"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Nova senha</span>
+            <input
+              id="password-next"
+              name="passwordNext"
+              type="password"
+              placeholder="Mínimo 6 caracteres"
+              autocomplete="new-password"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Confirmar nova senha</span>
+            <input
+              id="password-confirm"
+              name="passwordConfirm"
+              type="password"
+              placeholder="Repita a nova senha"
+              autocomplete="new-password"
+              required
+            />
+          </label>
+
+          <p class="governance-inline-note hidden" id="password-form-note"></p>
+          <p class="form-error hidden" id="password-form-feedback"></p>
+
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancel-password-modal-button" type="button">
+              Cancelar
+            </button>
+            <button class="primary-button" id="submit-password-modal-button" type="submit">
+              Atualizar senha
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="audit-log-modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="audit-log-modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Prestação de contas</p>
+            <h2 id="audit-log-modal-title">Trilha de auditoria</h2>
+            <p class="modal-help">
+              Filtre os eventos registrados por usuário para acompanhar as ações do sistema.
+            </p>
+          </div>
+          <button
+            class="icon-button"
+            id="close-audit-log-modal-button"
+            type="button"
+            aria-label="Fechar modal"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="governance-modal-stack">
+          <section class="governance-modal-section">
+            <label class="field">
+              <span>Filtrar por usuário</span>
+              <select id="audit-actor-filter"></select>
+            </label>
+          </section>
+
+          <section class="governance-modal-section">
+            <div class="audit-log-list" id="audit-log-list"></div>
+          </section>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary-button" id="cancel-audit-log-modal-button" type="button">
+            Fechar
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="auth-modal-backdrop">
+      <section class="modal modal-compact" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Área interna</p>
+            <h2 id="auth-modal-title">Check-in</h2>
+            <p class="modal-help" id="auth-modal-help">
+              A autenticação desta V1 é local para demonstração. A segurança real depende de backend e regras de acesso no servidor.
+            </p>
+          </div>
+          <button class="icon-button" id="close-auth-modal-button" type="button" aria-label="Fechar modal">
+            ×
+          </button>
+        </div>
+
+        <form id="auth-form">
+          <label class="field">
+            <span>E-mail</span>
+            <input id="auth-email" name="authEmail" type="email" placeholder="usuario@empresa.com" required />
+          </label>
+
+          <label class="field">
+            <span>Senha</span>
+            <input id="auth-password" name="authPassword" type="password" placeholder="Sua senha" required />
+          </label>
+
+          <div class="auth-form-support">
+            <button type="button" class="text-link" id="auth-forgot-password-button">Esqueci minha senha</button>
+          </div>
+
+          <p class="form-error hidden" id="auth-form-error"></p>
+
+          <p class="privacy-login-note">
+            Ao entrar, você concorda com o tratamento de seus dados conforme o
+            <button type="button" class="text-link" id="auth-privacy-link">Aviso de Privacidade</button>.
+          </p>
+
+          <div class="demo-credentials hidden">
+            <p class="demo-credentials-title">Contas de demonstração</p>
+            <ul class="governance-list">
+              <li><strong>Admin:</strong> admin@mykan.local / admin123</li>
+              <li><strong>Usuário 1:</strong> usuario1@mykan.local / user123</li>
+              <li><strong>Usuário 2:</strong> usuario2@mykan.local / user123</li>
+            </ul>
+          </div>
+
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancel-auth-modal-button" type="button">Cancelar</button>
+            <button class="primary-button" type="submit">Check-in</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="card-modal-backdrop">
+      <section class="modal" id="card-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Gestão de cartão</p>
+            <h2 id="modal-title">Novo cartão</h2>
+            <p class="modal-help">
+              Cadastre o pacote, a disciplina responsável, o prazo e possíveis bloqueios.
+            </p>
+          </div>
+          <button class="icon-button" id="close-modal-button" type="button" aria-label="Fechar modal">
+            ×
+          </button>
+        </div>
+
+        <form id="card-form">
+          <div class="form-grid">
+            <label class="field">
+              <span>Título</span>
+              <input id="card-title" name="title" type="text" placeholder="Ex: Compatibilizar forro do lobby" required />
+            </label>
+
+            <label class="field field-full">
+              <span>Descrição</span>
+              <textarea
+                id="card-description"
+                name="description"
+                rows="4"
+                placeholder="Contexto, escopo e observações da entrega"
+                required
+              ></textarea>
+            </label>
+
+            <label class="field">
+              <span>Data de entrega</span>
+              <input id="card-due-date" name="dueDate" type="date" required />
+              <div class="date-shortcuts">
+                <button type="button" class="date-shortcut-btn" id="date-shortcut-today">Hoje</button>
+                <button type="button" class="date-shortcut-btn" id="date-shortcut-plus7">+7 dias</button>
+              </div>
+            </label>
+
+            <label class="field">
+              <span>Disciplina responsável</span>
+              <select id="card-discipline" name="discipline" required></select>
+            </label>
+
+            <label class="field field-full" id="card-column-field">
+              <span>Etapa do fluxo</span>
+              <select id="card-column" name="columnId" required></select>
+            </label>
+          </div>
+
+          <p class="form-error hidden" id="form-error"></p>
+
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancel-modal-button" type="button">Cancelar</button>
+            <button class="primary-button" id="submit-modal-button" type="submit">Criar cartão</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="block-modal-backdrop">
+      <section class="modal modal-compact" role="dialog" aria-modal="true" aria-labelledby="block-modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Gargalo do ciclo</p>
+            <h2 id="block-modal-title">Informar bloqueio</h2>
+            <p class="modal-help">
+              Defina qual disciplina está travando o cartão e o que está pendente.
+            </p>
+          </div>
+          <button
+            class="icon-button"
+            id="close-block-modal-button"
+            type="button"
+            aria-label="Fechar modal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="block-form">
+          <label class="field">
+            <span>Disciplina responsável pelo bloqueio</span>
+            <select id="block-discipline" name="blockDiscipline" required></select>
+          </label>
+
+          <label class="field">
+            <span>O que está faltando / aguardando?</span>
+            <textarea
+              id="block-reason"
+              name="blockReason"
+              rows="4"
+              placeholder="Ex: aguardando posição final da prumada hidráulica"
+              required
+            ></textarea>
+          </label>
+
+          <p class="form-error hidden" id="block-form-error"></p>
+
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancel-block-modal-button" type="button">
+              Cancelar
+            </button>
+            <button class="primary-button" type="submit">Salvar bloqueio</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="discipline-modal-backdrop">
+      <section class="modal modal-compact" role="dialog" aria-modal="true" aria-labelledby="discipline-modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Configuração do quadro</p>
+            <h2 id="discipline-modal-title">Nova disciplina</h2>
+            <p class="modal-help">
+              Crie uma nova disciplina para aparecer nos filtros e nos formulários de cartão.
+            </p>
+          </div>
+          <button
+            class="icon-button"
+            id="close-discipline-modal-button"
+            type="button"
+            aria-label="Fechar modal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="discipline-form">
+          <label class="field">
+            <span>Nome da disciplina</span>
+            <input
+              id="discipline-name"
+              name="disciplineName"
+              type="text"
+              placeholder="Ex: Paisagismo"
+              required
+            />
+          </label>
+
+          <p class="form-error hidden" id="discipline-form-error"></p>
+
+          <div class="modal-actions">
+            <button class="secondary-button" id="cancel-discipline-modal-button" type="button">
+              Cancelar
+            </button>
+            <button class="primary-button" type="submit">Criar disciplina</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+    <div class="modal-backdrop hidden" id="confirm-modal-backdrop">
+      <section class="modal modal-compact" role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-message">
+        <div class="confirm-modal-body">
+          <p class="confirm-modal-message" id="confirm-modal-message"></p>
+          <div class="modal-actions">
+            <button class="secondary-button" id="confirm-modal-cancel" type="button">Cancelar</button>
+            <button class="primary-button danger-button" id="confirm-modal-ok" type="button">Confirmar</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="openai-config-modal-backdrop">
+      <section class="modal modal-compact" role="dialog" aria-modal="true" aria-labelledby="openai-config-modal-title">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow eyebrow-light">Integração de IA</p>
+            <h2 id="openai-config-modal-title">Configurar IA</h2>
+          </div>
+          <button class="icon-button" id="close-openai-config-modal" type="button" aria-label="Fechar modal">×</button>
+        </div>
+        <form id="openai-config-form">
+          <div class="modal-form-grid">
+            <label class="field field-full">
+              <span id="openai-config-apikey-label">API Key</span>
+              <input type="password" id="openai-config-apikey" placeholder="sk-..." autocomplete="off" />
+            </label>
+            <label class="field">
+              <span>Modelo</span>
+              <input type="text" id="openai-config-model" />
+            </label>
+            <label class="field">
+              <span>Endpoint</span>
+              <input type="text" id="openai-config-endpoint" />
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button class="secondary-button" id="openai-config-cancel" type="button">Cancelar</button>
+            <button class="primary-button" type="submit">Salvar</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/12.12.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.12.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-bootstrap.js?v=20260503-01"></script>
+    <script src="js/app.js?v=20260503-02"></script>
+  </body>
+</html>

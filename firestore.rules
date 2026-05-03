@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUserDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function hasCurrentUserDoc() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return hasCurrentUserDoc() && currentUserDoc().data.role == "admin";
+    }
+
+    function hasPermission(permission) {
+      return signedIn()
+        && (
+          isAdmin()
+          || (
+            hasCurrentUserDoc()
+            && currentUserDoc().data.permissions[permission] == true
+          )
+        );
+    }
+
+    function canWriteCards() {
+      return hasPermission("cards.create")
+        || hasPermission("cards.edit")
+        || hasPermission("cards.move")
+        || hasPermission("cards.delete");
+    }
+
+    function canWriteCheckpoint() {
+      return hasPermission("checkpoint.create")
+        || hasPermission("checkpoint.edit")
+        || hasPermission("checkpoint.validate")
+        || hasPermission("checkpoint.archive")
+        || hasPermission("checkpoint.delete");
+    }
+
+    match /cards/{cardId} {
+      allow read: if true;
+      allow write: if canWriteCards();
+    }
+
+    match /checkpointItems/{itemId} {
+      allow read: if true;
+      allow write: if canWriteCheckpoint();
+    }
+
+    match /appConfig/{configId} {
+      allow read: if true;
+      allow write: if hasPermission("disciplines.create");
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow update, delete: if isAdmin();
+    }
+
+    match /privacyRequests/{requestId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /auditLogs/{logId} {
+      allow create, update: if signedIn();
+      allow read: if hasPermission("audit.view");
+      allow delete: if isAdmin();
+    }
+
+    match /system/{documentId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && !exists(/databases/$(database)/documents/system/$(documentId));
+      allow update, delete: if isAdmin();
+    }
+  }
+}
