@@ -2681,7 +2681,7 @@
     }
   }
 
-  async function logoutCurrentUser() {
+  async function logoutCurrentUserLegacy() {
     const user = getCurrentUser();
 
     if (user && !firebaseState.enabled) {
