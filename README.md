@@ -1,28 +1,49 @@
 # mYkan
 
-MVP de um quadro Kanban para coordenação de projetos de construção civil com duas camadas de acesso:
+Aplicacao web estatica para acompanhamento de projetos de construcao civil, combinando quadro Kanban, pauta de checkpoints e camada interna de governanca.
 
-- `Área pública`: leitura aberta de cards e pautas já publicados.
-- `Área interna`: edição, publicação, governança, usuários locais e trilha de auditoria.
+## Visao geral
 
-## Estrutura
+O projeto hoje opera com:
 
-- `index.html`: estrutura da aplicação e painéis de governança
+- leitura publica de cards e pautas publicadas;
+- area interna autenticada para criar, editar, mover, publicar e arquivar conteudo;
+- gestao de usuarios, permissoes, senhas, privacidade e trilha de auditoria;
+- integracao opcional com a API da OpenAI para transformar pontos de checkpoint em cards.
+
+## Stack atual
+
+- `HTML`, `CSS` e `JavaScript` vanilla
+- `Firebase Hosting`
+- `Firebase Authentication` com `Email/Password`
+- `Cloud Firestore`
+- `OpenAI Responses API` para geracao assistida de cards
+
+## Recursos implementados
+
+- painel Kanban com colunas fixas e movimento de cards por drag and drop;
+- controle de acesso por permissao para criar, editar, mover e excluir cards;
+- publicacao de cards e pautas com estados `internal`, `review` e `published`;
+- aba de checkpoint com assuntos ativos, historico arquivado e validacao de pontos;
+- criacao de cards a partir de pontos do checkpoint via IA;
+- gestao interna de usuarios com permissoes granulares;
+- troca de senha, senha provisoria obrigando atualizacao e expiracao de sessao apos 30 minutos;
+- exportacao de "meus dados", formulario de solicitacao do titular e trilha de auditoria;
+- persistencia de cards, checkpoint, usuarios, logs e configuracoes no Firestore.
+
+## Estrutura principal
+
+- `index.html`: estrutura da aplicacao e modais
 - `css/styles.css`: layout, responsividade e identidade visual
-- `js/app.js`: estado, renderização, drag-and-drop, autenticação local, publicação e persistência em `localStorage`
-- `docs/auth-firebase-plan.md`: próximo passo para migrar a segurança para backend real
+- `js/app.js`: estado da interface, regras de permissao, renderizacao, IA e fluxos da aplicacao
+- `js/firebase-bootstrap.js`: bootstrap do Firebase Auth e Firestore
+- `firestore.rules`: regras de acesso do banco
+- `firebase.json`: configuracao de Hosting e deploy
+- `docs/auth-firebase-plan.md`: registro do plano original de evolucao da autenticacao
 
-## Como visualizar
+## Como executar localmente
 
-Opção 1:
-
-- Abra `index.html` diretamente no navegador.
-
-Opção 2:
-
-- Sirva a pasta com qualquer servidor estático simples.
-
-Exemplo com Python:
+Sirva a raiz do projeto com um servidor estatico simples:
 
 ```bash
 python -m http.server 8000
@@ -34,32 +55,39 @@ Depois acesse:
 http://localhost:8000
 ```
 
-## O que a V1 implementa
+Abrir `index.html` diretamente via `file://` nao e o fluxo recomendado, porque o Firebase Auth pode rejeitar dominios nao autorizados.
 
-- Navegação em 3 abas: `Painel`, `Ata de Checkpoint` e `Governança`
-- Alternância entre `Área pública` e `Área interna`
-- Login local de demonstração com perfis `admin`, `coordenador` e `colaborador`
-- Permissões por perfil para edição, publicação, IA e gestão de usuários
-- Fluxo de publicação com estados `Interno`, `Em revisão` e `Publicado`
-- Snapshot público separado do conteúdo interno para cards e pautas
-- Detecção simples de dado pessoal direto antes de publicar
-- Canal do titular com registro local de solicitações
-- Trilha de auditoria local para login, publicação, usuários e pedidos
-- Geração de cards a partir de pontos com IA
-- Persistência local no navegador
+## Dependencias operacionais
 
-## Contas locais de demonstração
+Para a area interna funcionar de ponta a ponta, o projeto Firebase precisa estar configurado:
 
-- `admin@mykan.local / admin123`
-- `coordenador@mykan.local / coord123`
-- `colaborador@mykan.local / colab123`
+- projeto padrao definido em `.firebaserc`: `mykan-web`;
+- `Email/Password` habilitado no Firebase Authentication;
+- dominio de desenvolvimento autorizado no Firebase Auth;
+- regras do Firestore publicadas a partir de `firestore.rules`.
 
-## Limite importante
+Colecoes usadas pela aplicacao:
 
-Esta versão continua sendo um app estático. Portanto:
+- `cards`
+- `checkpointItems`
+- `appConfig`
+- `users`
+- `privacyRequests`
+- `auditLogs`
+- `system`
 
-- o login é apenas local e demonstrativo;
-- as permissões existem no front-end, não no servidor;
-- a proteção real de dados e a segurança de autenticação exigem backend, regras de acesso e armazenamento seguro de segredos.
+## IA
 
-Para produção, o próximo passo continua sendo migrar autenticação, autorização e persistência para Firebase ou outro backend com regras reais.
+A geracao de cards usa por padrao:
+
+- endpoint `https://api.openai.com/v1/responses`
+- modelo `gpt-5-mini`
+
+A configuracao de IA e feita pela interface e depende da permissao `ai.configure`. A geracao depende da permissao `ai.generate`.
+
+## Observacoes importantes
+
+- A aplicacao continua sem etapa de build: e um front-end estatico servido diretamente.
+- As regras do Firestore permitem leitura publica de cards, pautas e configuracoes publicas, mas restringem escrita conforme autenticacao e permissao.
+- O primeiro usuario autenticado que ainda nao tenha perfil em `users` recebe bootstrap de perfil automaticamente; quando a base ainda nao foi inicializada, esse perfil vira `admin`.
+- A configuracao da OpenAI e armazenada no navegador do usuario logado no cliente atual. Nao trate essa abordagem como cofre de segredos.

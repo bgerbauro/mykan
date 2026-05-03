@@ -2056,6 +2056,45 @@ button {
   min-height: 120px;
 }
 
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 52px;
+}
+
+.password-toggle-button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.password-toggle-button:hover,
+.password-toggle-button:focus-visible {
+  background: rgba(226, 232, 240, 0.78);
+  color: var(--text);
+}
+
+.password-toggle-icon {
+  width: 18px;
+  height: 18px;
+}
+
 .form-error {
   margin: 18px 0 0;
   color: var(--danger);

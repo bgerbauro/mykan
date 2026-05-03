@@ -394,7 +394,7 @@
             type="button"
             aria-label="Fechar modal"
           >
-            ×
+            &times;
           </button>
         </div>
 
@@ -520,9 +520,9 @@
         <div class="modal-header">
           <div>
             <p class="eyebrow eyebrow-light">Acessos internos</p>
-            <h2 id="user-modal-title">Criar usuário interno</h2>
+            <h2 id="user-modal-title">Criar novo usuario</h2>
             <p class="modal-help" id="user-modal-help">
-              Defina os dados do usuário, seu perfil e as permissões que ele poderá usar.
+              Defina os dados do usuario, seu perfil e as permissoes que ele podera usar.
             </p>
           </div>
           <button
@@ -539,7 +539,7 @@
           <div class="form-grid">
             <label class="field">
               <span>Nome</span>
-              <input id="user-name" name="userName" type="text" placeholder="Nome do usuário" required />
+              <input id="user-name" name="userName" type="text" placeholder="Nome do usuario" required />
             </label>
 
             <label class="field">
@@ -549,14 +549,34 @@
 
             <label class="field">
               <span>Senha</span>
-              <input id="user-password" name="userPassword" type="text" placeholder="Mínimo 6 caracteres" required />
+              <div class="password-field">
+                <input id="user-password" name="userPassword" type="password" placeholder="Minimo 6 caracteres" required />
+                <button
+                  type="button"
+                  class="password-toggle-button"
+                  id="user-password-toggle"
+                  aria-label="Mostrar senha"
+                  aria-pressed="false"
+                >
+                  <svg class="password-toggle-icon password-toggle-icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg class="password-toggle-icon password-toggle-icon-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 3l18 18"/>
+                    <path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-4.4"/>
+                    <path d="M9.9 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-3.2 4.2"/>
+                    <path d="M6.7 6.7A18.2 18.2 0 0 0 2 12s3.5 7 10 7a10.7 10.7 0 0 0 5.2-1.3"/>
+                  </svg>
+                </button>
+              </div>
             </label>
 
             <label class="field">
               <span>Perfil</span>
               <select id="user-role" name="userRole" required>
                 <option value="admin">Admin</option>
-                <option value="user">Usuário</option>
+                <option value="user">Usuario</option>
               </select>
             </label>
 
@@ -573,7 +593,7 @@
           </div>
 
           <section class="governance-modal-section">
-            <h3>Permissões</h3>
+            <h3>Permissoes</h3>
             <p class="governance-inline-note hidden" id="user-permission-note"></p>
             <div class="permission-grid" id="user-permission-grid"></div>
           </section>
@@ -585,7 +605,7 @@
               Cancelar
             </button>
             <button class="primary-button" id="submit-user-modal-button" type="submit">
-              Criar usuário interno
+              Criar novo usuario
             </button>
           </div>
         </form>
@@ -603,51 +623,114 @@
             </p>
           </div>
           <button class="icon-button" id="close-password-modal-button" type="button" aria-label="Fechar modal">
-            Ã—
+            &times;
           </button>
         </div>
 
         <form id="password-form">
           <label class="field">
             <span>Senha atual</span>
-            <input
-              id="password-current"
-              name="passwordCurrent"
-              type="password"
-              placeholder="Informe sua senha atual"
-              autocomplete="current-password"
-              required
-            />
+            <div class="password-field">
+              <input
+                id="password-current"
+                name="passwordCurrent"
+                type="password"
+                placeholder="Informe sua senha atual"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="password-toggle-button"
+                id="password-current-toggle"
+                aria-label="Mostrar senha"
+                aria-pressed="false"
+              >
+                <svg class="password-toggle-icon password-toggle-icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="password-toggle-icon password-toggle-icon-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 3l18 18"/>
+                  <path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-4.4"/>
+                  <path d="M9.9 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-3.2 4.2"/>
+                  <path d="M6.7 6.7A18.2 18.2 0 0 0 2 12s3.5 7 10 7a10.7 10.7 0 0 0 5.2-1.3"/>
+                </svg>
+              </button>
+            </div>
           </label>
 
           <label class="field">
             <span>Nova senha</span>
-            <input
-              id="password-next"
-              name="passwordNext"
-              type="password"
-              placeholder="Mínimo 6 caracteres"
-              autocomplete="new-password"
-              required
-            />
+            <div class="password-field">
+              <input
+                id="password-next"
+                name="passwordNext"
+                type="password"
+                placeholder="Minimo 6 caracteres"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                class="password-toggle-button"
+                id="password-next-toggle"
+                aria-label="Mostrar senha"
+                aria-pressed="false"
+              >
+                <svg class="password-toggle-icon password-toggle-icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="password-toggle-icon password-toggle-icon-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 3l18 18"/>
+                  <path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-4.4"/>
+                  <path d="M9.9 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-3.2 4.2"/>
+                  <path d="M6.7 6.7A18.2 18.2 0 0 0 2 12s3.5 7 10 7a10.7 10.7 0 0 0 5.2-1.3"/>
+                </svg>
+              </button>
+            </div>
           </label>
 
           <label class="field">
             <span>Confirmar nova senha</span>
-            <input
-              id="password-confirm"
-              name="passwordConfirm"
-              type="password"
-              placeholder="Repita a nova senha"
-              autocomplete="new-password"
-              required
-            />
+            <div class="password-field">
+              <input
+                id="password-confirm"
+                name="passwordConfirm"
+                type="password"
+                placeholder="Repita a nova senha"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                class="password-toggle-button"
+                id="password-confirm-toggle"
+                aria-label="Mostrar senha"
+                aria-pressed="false"
+              >
+                <svg class="password-toggle-icon password-toggle-icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="password-toggle-icon password-toggle-icon-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 3l18 18"/>
+                  <path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-4.4"/>
+                  <path d="M9.9 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-3.2 4.2"/>
+                  <path d="M6.7 6.7A18.2 18.2 0 0 0 2 12s3.5 7 10 7a10.7 10.7 0 0 0 5.2-1.3"/>
+                </svg>
+              </button>
+            </div>
           </label>
 
           <p class="governance-inline-note hidden" id="password-form-note"></p>
           <p class="form-error hidden" id="password-form-feedback"></p>
 
           <div class="modal-actions">
+            <button class="secondary-button hidden" id="password-forgot-exit-button" type="button">
+              Sair e recuperar por e-mail
+            </button>
             <button class="secondary-button" id="cancel-password-modal-button" type="button">
               Cancelar
             </button>
@@ -723,7 +806,27 @@
 
           <label class="field">
             <span>Senha</span>
-            <input id="auth-password" name="authPassword" type="password" placeholder="Sua senha" required />
+            <div class="password-field">
+              <input id="auth-password" name="authPassword" type="password" placeholder="Sua senha" required />
+              <button
+                type="button"
+                class="password-toggle-button"
+                id="auth-password-toggle"
+                aria-label="Mostrar senha"
+                aria-pressed="false"
+              >
+                <svg class="password-toggle-icon password-toggle-icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="password-toggle-icon password-toggle-icon-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 3l18 18"/>
+                  <path d="M10.6 10.6A3 3 0 0 0 12 15a3 3 0 0 0 2.4-4.4"/>
+                  <path d="M9.9 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a18.7 18.7 0 0 1-3.2 4.2"/>
+                  <path d="M6.7 6.7A18.2 18.2 0 0 0 2 12s3.5 7 10 7a10.7 10.7 0 0 0 5.2-1.3"/>
+                </svg>
+              </button>
+            </div>
           </label>
 
           <div class="auth-form-support">
@@ -963,3 +1066,4 @@
     <script src="js/app.js?v=20260503-02"></script>
   </body>
 </html>
+

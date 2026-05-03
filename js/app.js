@@ -475,6 +475,7 @@
     authModalHelp: document.getElementById("auth-modal-help"),
     authEmailInput: document.getElementById("auth-email"),
     authPasswordInput: document.getElementById("auth-password"),
+    authPasswordToggle: document.getElementById("auth-password-toggle"),
     authForgotPasswordButton: document.getElementById("auth-forgot-password-button"),
     authFormError: document.getElementById("auth-form-error"),
     openGovernanceInfoButton: document.getElementById("open-governance-info-button"),
@@ -507,6 +508,7 @@
     userNameInput: document.getElementById("user-name"),
     userEmailInput: document.getElementById("user-email"),
     userPasswordInput: document.getElementById("user-password"),
+    userPasswordToggle: document.getElementById("user-password-toggle"),
     userRoleInput: document.getElementById("user-role"),
     userActiveInput: document.getElementById("user-active"),
     userActiveState: document.getElementById("user-active-state"),
@@ -525,11 +527,15 @@
     passwordModalHelp: document.getElementById("password-modal-help"),
     closePasswordModalButton: document.getElementById("close-password-modal-button"),
     cancelPasswordModalButton: document.getElementById("cancel-password-modal-button"),
+    passwordForgotExitButton: document.getElementById("password-forgot-exit-button"),
     submitPasswordModalButton: document.getElementById("submit-password-modal-button"),
     passwordForm: document.getElementById("password-form"),
     passwordCurrentInput: document.getElementById("password-current"),
+    passwordCurrentToggle: document.getElementById("password-current-toggle"),
     passwordNextInput: document.getElementById("password-next"),
+    passwordNextToggle: document.getElementById("password-next-toggle"),
     passwordConfirmInput: document.getElementById("password-confirm"),
+    passwordConfirmToggle: document.getElementById("password-confirm-toggle"),
     passwordFormNote: document.getElementById("password-form-note"),
     passwordFormFeedback: document.getElementById("password-form-feedback"),
     auditLogPanel: document.getElementById("audit-log-panel"),
@@ -630,6 +636,19 @@
     elements.logoutButton.addEventListener("click", logoutCurrentUser);
     elements.boardGateLoginButton.addEventListener("click", openAuthModal);
     elements.checkpointGateLoginButton.addEventListener("click", openAuthModal);
+    elements.authPasswordToggle.addEventListener("click", toggleAuthPasswordVisibility);
+    elements.userPasswordToggle.addEventListener("click", function () {
+      togglePasswordInputVisibility(elements.userPasswordInput, elements.userPasswordToggle);
+    });
+    elements.passwordCurrentToggle.addEventListener("click", function () {
+      togglePasswordInputVisibility(elements.passwordCurrentInput, elements.passwordCurrentToggle);
+    });
+    elements.passwordNextToggle.addEventListener("click", function () {
+      togglePasswordInputVisibility(elements.passwordNextInput, elements.passwordNextToggle);
+    });
+    elements.passwordConfirmToggle.addEventListener("click", function () {
+      togglePasswordInputVisibility(elements.passwordConfirmInput, elements.passwordConfirmToggle);
+    });
 
     elements.newCardButton.addEventListener("click", function () {
       openModal("create", null);
@@ -826,6 +845,7 @@
     elements.cancelUserModalButton.addEventListener("click", closeUserModal);
     elements.closePasswordModalButton.addEventListener("click", closePasswordModal);
     elements.cancelPasswordModalButton.addEventListener("click", closePasswordModal);
+    elements.passwordForgotExitButton.addEventListener("click", exitRequiredPasswordFlow);
     elements.userRoleInput.addEventListener("change", handleUserRoleInputChange);
     elements.userActiveInput.addEventListener("change", syncUserActiveToggle);
     elements.openAuditLogButton.addEventListener("click", openAuditLogModal);
@@ -2166,6 +2186,7 @@
 
   function openAuthModal() {
     elements.authForm.reset();
+    setAuthPasswordVisibility(false);
     elements.authFormError.classList.add("hidden");
     elements.authFormError.classList.remove("is-success");
     elements.authFormError.textContent = "";
@@ -2178,9 +2199,34 @@
     deactivateFocusTrap();
     elements.authModalBackdrop.classList.add("hidden");
     elements.authForm.reset();
+    setAuthPasswordVisibility(false);
     elements.authFormError.classList.add("hidden");
     elements.authFormError.classList.remove("is-success");
     elements.authFormError.textContent = "";
+  }
+
+  function setPasswordInputVisibility(inputEl, toggleEl, isVisible) {
+    if (!inputEl || !toggleEl) {
+      return;
+    }
+
+    inputEl.type = isVisible ? "text" : "password";
+    toggleEl.setAttribute("aria-pressed", isVisible ? "true" : "false");
+    toggleEl.setAttribute("aria-label", isVisible ? "Ocultar senha" : "Mostrar senha");
+    toggleEl.querySelector(".password-toggle-icon-eye").classList.toggle("hidden", isVisible);
+    toggleEl.querySelector(".password-toggle-icon-off").classList.toggle("hidden", !isVisible);
+  }
+
+  function togglePasswordInputVisibility(inputEl, toggleEl) {
+    setPasswordInputVisibility(inputEl, toggleEl, inputEl.type === "password");
+  }
+
+  function setAuthPasswordVisibility(isVisible) {
+    setPasswordInputVisibility(elements.authPasswordInput, elements.authPasswordToggle, isVisible);
+  }
+
+  function toggleAuthPasswordVisibility() {
+    setAuthPasswordVisibility(elements.authPasswordInput.type === "password");
   }
 
   function openPasswordModal(options) {
@@ -2194,6 +2240,9 @@
     state.passwordModalMode = isRequired ? "required" : "self-service";
     state.passwordResetRequired = isRequired;
     elements.passwordForm.reset();
+    setPasswordInputVisibility(elements.passwordCurrentInput, elements.passwordCurrentToggle, false);
+    setPasswordInputVisibility(elements.passwordNextInput, elements.passwordNextToggle, false);
+    setPasswordInputVisibility(elements.passwordConfirmInput, elements.passwordConfirmToggle, false);
     elements.passwordFormFeedback.classList.add("hidden");
     elements.passwordFormFeedback.classList.remove("is-success");
     elements.passwordFormFeedback.textContent = "";
@@ -2201,22 +2250,24 @@
     if (isRequired) {
       elements.passwordModalTitle.textContent = "Defina sua senha de acesso";
       elements.passwordModalHelp.textContent =
-        "Este Ã© o primeiro acesso desta conta. Troque a senha provisÃ³ria antes de continuar.";
+        "Este e o primeiro acesso desta conta. Troque a senha provisoria antes de continuar.";
       elements.passwordFormNote.textContent =
-        "A troca Ã© obrigatÃ³ria e libera o ambiente interno apenas depois da atualizaÃ§Ã£o.";
+        "A troca e obrigatoria. Se voce nao lembrar a senha provisoria, saia e use a recuperacao por e-mail.";
       elements.passwordFormNote.classList.remove("hidden");
       elements.closePasswordModalButton.classList.add("hidden");
       elements.cancelPasswordModalButton.classList.add("hidden");
+      elements.passwordForgotExitButton.classList.remove("hidden");
       elements.submitPasswordModalButton.textContent = "Salvar nova senha";
     } else {
       elements.passwordModalTitle.textContent = "Redefinir senha";
       elements.passwordModalHelp.textContent =
-        "Informe sua senha atual e cadastre uma nova credencial para os prÃ³ximos acessos.";
+        "Informe sua senha atual e cadastre uma nova credencial para os proximos acessos.";
       elements.passwordFormNote.textContent =
-        "A sessÃ£o atual continua ativa atÃ© o vencimento ou atÃ© um novo check-in.";
+        "A sessao atual continua ativa ate o vencimento ou ate um novo check-in.";
       elements.passwordFormNote.classList.remove("hidden");
       elements.closePasswordModalButton.classList.remove("hidden");
       elements.cancelPasswordModalButton.classList.remove("hidden");
+      elements.passwordForgotExitButton.classList.add("hidden");
       elements.submitPasswordModalButton.textContent = "Atualizar senha";
     }
 
@@ -2229,6 +2280,9 @@
     deactivateFocusTrap();
     elements.passwordModalBackdrop.classList.add("hidden");
     elements.passwordForm.reset();
+    setPasswordInputVisibility(elements.passwordCurrentInput, elements.passwordCurrentToggle, false);
+    setPasswordInputVisibility(elements.passwordNextInput, elements.passwordNextToggle, false);
+    setPasswordInputVisibility(elements.passwordConfirmInput, elements.passwordConfirmToggle, false);
     elements.passwordFormFeedback.classList.add("hidden");
     elements.passwordFormFeedback.classList.remove("is-success");
     elements.passwordFormFeedback.textContent = "";
@@ -2236,6 +2290,7 @@
     elements.passwordFormNote.textContent = "";
     elements.closePasswordModalButton.classList.remove("hidden");
     elements.cancelPasswordModalButton.classList.remove("hidden");
+    elements.passwordForgotExitButton.classList.add("hidden");
     state.passwordModalMode = "self-service";
   }
 
@@ -2245,6 +2300,30 @@
     }
 
     resetPasswordModalState();
+  }
+
+  async function exitRequiredPasswordFlow() {
+    var user = getCurrentUser();
+    var email = user && user.email ? user.email : "";
+
+    await logoutCurrentUser({
+      reason: "manual",
+      openAuth: true,
+    });
+
+    window.setTimeout(function () {
+      if (!elements.authModalBackdrop.classList.contains("hidden")) {
+        if (email) {
+          elements.authEmailInput.value = email;
+        }
+
+        showAuthFormMessage(
+          "Use 'Esqueci minha senha' para receber o link de redefinicao por e-mail.",
+          false,
+        );
+        elements.authForgotPasswordButton.focus();
+      }
+    }, 180);
   }
 
   function openGovernanceInfoModal() {
@@ -2291,6 +2370,7 @@
     elements.userForm.reset();
     elements.userFormFeedback.classList.add("hidden");
     elements.userFormFeedback.textContent = "";
+    setPasswordInputVisibility(elements.userPasswordInput, elements.userPasswordToggle, false);
 
     if (editingUser) {
       state.governanceUserDraftPermissions =
@@ -2316,13 +2396,13 @@
       syncUserActiveToggle();
     } else {
       state.governanceUserDraftPermissions = Object.assign({}, DEFAULT_USER_PERMISSIONS);
-      elements.userModalTitle.textContent = "Criar usuário interno";
+      elements.userModalTitle.textContent = "Criar novo usuario";
       elements.userModalHelp.textContent =
-        "Defina os dados do usuário, seu perfil e as permissões que ele poderá usar.";
-      elements.submitUserModalButton.textContent = "Criar usuário interno";
+        "Defina os dados do usuario, seu perfil e as permissoes que ele podera usar.";
+      elements.submitUserModalButton.textContent = "Criar novo usuario";
       elements.userEmailInput.disabled = false;
       elements.userPasswordInput.required = true;
-      elements.userPasswordInput.placeholder = "Mínimo 6 caracteres";
+      elements.userPasswordInput.placeholder = "Minimo 6 caracteres";
       elements.userRoleInput.value = "user";
       elements.userActiveInput.checked = true;
       elements.userActiveInput.disabled = false;
@@ -2339,6 +2419,7 @@
     deactivateFocusTrap();
     elements.userModalBackdrop.classList.add("hidden");
     elements.userForm.reset();
+    setPasswordInputVisibility(elements.userPasswordInput, elements.userPasswordToggle, false);
     elements.userFormFeedback.classList.add("hidden");
     elements.userFormFeedback.textContent = "";
     elements.userPermissionGrid.innerHTML = "";
@@ -2847,12 +2928,17 @@
     if (firebaseState.enabled) {
       try {
         await firebaseApi.changeOwnPassword(user.email, currentPassword, nextPassword);
+      } catch (error) {
+        return showPasswordFormFeedback(mapFirebasePasswordChangeError(error), true);
+      }
+
+      try {
         await firebaseApi.saveUserProfile(user.id, {
           mustChangePassword: false,
           passwordUpdatedAt: changedAt,
         });
       } catch (error) {
-        return showPasswordFormFeedback(mapFirebasePasswordChangeError(error), true);
+        return showPasswordFormFeedback(mapFirebasePasswordProfileSyncError(error), true);
       }
     } else if (user.password !== currentPassword) {
       return showPasswordFormFeedback("A senha atual nao confere.", true);
@@ -2938,7 +3024,7 @@
 
     if (firebaseState.enabled && isEditMode && password) {
       return showUserFormFeedback(
-        "A troca de senha ainda nÃ£o estÃ¡ conectada ao Firebase. Deixe o campo em branco por enquanto.",
+        "A troca de senha ainda nao esta conectada ao Firebase. Deixe o campo em branco por enquanto.",
         true,
       );
     }
@@ -5471,6 +5557,19 @@
     }
   }
 
+  function mapFirebasePasswordProfileSyncError(error) {
+    var code = error && error.code ? error.code : "";
+
+    switch (code) {
+      case "permission-denied":
+        return "A senha foi alterada no Firebase, mas a atualizacao do perfil foi bloqueada. Publique as regras do Firestore atualizadas e tente entrar novamente.";
+      case "unavailable":
+        return "A senha foi alterada, mas nao foi possivel concluir a atualizacao do perfil agora.";
+      default:
+        return "A senha foi alterada, mas nao foi possivel concluir a atualizacao do perfil.";
+    }
+  }
+
   function mapFirebaseUserProvisioningError(error) {
     var code = error && error.code ? error.code : "";
 
@@ -6297,3 +6396,4 @@
     });
   }
 })();
+

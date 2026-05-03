@@ -43,6 +43,23 @@ service cloud.firestore {
         || hasPermission("checkpoint.delete");
     }
 
+    function canSelfUpdatePasswordState(userId) {
+      return signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "mustChangePassword",
+          "passwordUpdatedAt",
+          "updatedAt",
+        ])
+        && request.resource.data.mustChangePassword == false
+        && request.resource.data.name == resource.data.name
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.active == resource.data.active
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.permissions == resource.data.permissions;
+    }
+
     match /cards/{cardId} {
       allow read: if true;
       allow write: if canWriteCards();
@@ -61,7 +78,8 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
       allow create: if signedIn() && (request.auth.uid == userId || isAdmin());
-      allow update, delete: if isAdmin();
+      allow update: if isAdmin() || canSelfUpdatePasswordState(userId);
+      allow delete: if isAdmin();
     }
 
     match /privacyRequests/{requestId} {
